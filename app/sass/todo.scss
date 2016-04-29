@@ -1,0 +1,39 @@
+/* Todo List */
+
+.todo-list {
+    
+}
+
+.todo-item {
+    padding-right: 48px;
+    position: relative;
+}
+
+.todo-item .todo-done-btn {
+    position: absolute;
+    right: 26px;
+    top: 16px;
+    opacity: 0;
+    transition: opacity 200ms linear;
+}
+
+.todo-item .todo-remove-btn {
+    position: absolute;
+    right: 6px;
+    top: 16px;
+    opacity: 0;
+    transition: opacity 200ms linear;
+}
+
+.todo-item:hover .todo-done-btn {
+    opacity: 1;
+}
+
+.todo-item:hover .todo-remove-btn {
+    opacity: 1;
+}
+
+.todo-item-title-activator {
+    padding: 7px 13px;
+    cursor: pointer;
+}

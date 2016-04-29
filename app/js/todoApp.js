@@ -4,7 +4,7 @@
  * @ngdoc overview
  * @name todoApp
  * @description 
- * Angular todo list.
+ * Angular example application.
  */
 
 angular.module('todoApp', ['ngAnimate']);

@@ -6,3 +6,8 @@ body {
 
 .container.main {
   margin-top: 32px; }
+
+.spinner {
+  display: block;
+  min-height: 46px;
+  background: url("../img/spinner.gif") no-repeat 0px center; }

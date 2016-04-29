@@ -1,0 +1,24 @@
+<div ng-controller="todoListController as todolist" class="todo-list">
+    <h1>Todo list</h1>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <form name="todoForm" ng-submit="todolist.addItem(todolist.newItem)">
+                <input type="text" class="form-control" ng-model="todolist.newItem" placeholder="What needs to be done?" />
+            </form>
+        </div>
+        <div class="panel-body" ng-if="todolist.todoData.length === 0">
+            Nothing to do at the moment!
+        </div>
+        <ul class="list-group todo-list" ng-if="todolist.todoData.length > 0">
+            <!--<li class="list-group-item" ng-repeat="todoItem in todolist.todoData">{{todoItem.title}}</li>-->
+            <li class="list-group-item todo-item" ng-repeat="todoItem in todolist.todoData track by $index" ng-class="{'list-group-item-success': todoItem.done}">
+                <a href="#" ng-click="todolist.toggleItemDone($index)" class="todo-done-btn"><span class="glyphicon glyphicon-ok"></span></a>
+                <a href="#" ng-click="todolist.deleteItem($index)" class="todo-remove-btn"><span class="glyphicon glyphicon-remove"></span></a>
+                <div todo-item-title title="todoItem.title" index="$index" />
+            </li>
+        </ul>
+        <div class="panel-footer" ng-if="todolist.todoData.length > 0">
+            <a href="#" ng-click="todolist.removeDoneItems()">Remove done items</a>
+        </div>
+    </div>
+</div>

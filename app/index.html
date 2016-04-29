@@ -13,14 +13,20 @@
         <script src="js/todoApp.js"></script>
 
         <!-- Controllers -->
+        <script src="js/controllers/todoListController.js"></script>
 
         <!-- Directives -->
+        <script src="js/directives/todoItemTitleDirective.js"></script>
+        <script src="js/directives/autoFocusDirective.js"></script>
         
         <!-- Services -->
+        <script src="js/services/todoService.js"></script>
+        <script src="js/services/storageService.js"></script>
 
         <!-- CSS -->
         <link rel="stylesheet" type="text/css" href="lib/bootstrap/dist/css/bootstrap.min.css" />
         <link rel="stylesheet" type="text/css" href="css/main.css" />
+        <link rel="stylesheet" type="text/css" href="css/todo.css" />
 
         <!-- Mocks -->
 
@@ -35,7 +41,7 @@
 
         <div class="container main" style="width: 400px;">
 
-            <!--<div ng-include="'partials/todoList.html'" />-->
+            <div ng-include="'partials/todoList.html'" />
             
         </div>
         

@@ -1,0 +1,18 @@
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea
+
+# Runtime
+reports
+temp
+docs
+
+# Dependencies
+app/lib
+node_modules
+
+#grunt/node
+.tmp/
+*.log

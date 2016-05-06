@@ -19,6 +19,7 @@ module.exports = function (grunt) {
     var hostname            = grunt.option('hostname') || '0.0.0.0';
     var protractorHostname  = grunt.option('protractor-host') || 'localhost';
     var seleniumAddress     = grunt.option('seleniumAddress') || 'http://localhost:4444/wd/hub';
+    var seleniumUrl         = grunt.option('seleniumUrl') || 'http://localhost:4444/wd/hub';
 
     grunt.initConfig({
         livereload: {
@@ -72,6 +73,20 @@ module.exports = function (grunt) {
                         ];
                     }
                 }
+            },
+            instrument: {
+                options: {
+                    port: serverPort,
+                    middleware: function (connect) {
+                        return [
+                            lrSnippet,
+                            mountFolder(connect, 'instrumented'),
+                            connect().use('/', connect.static('instrumented/app')),
+                            connect().use('/', connect.static('instrumented/test/protractor')),
+                            connect().use('/mocks', connect.static('instrumented/test/mocks'))
+                        ];
+                    }
+                }
             }
         },
         
@@ -86,6 +101,13 @@ module.exports = function (grunt) {
                 //app: 'Chrome'
             }
         },
+        
+        // Clean  temp folders
+		clean: {
+            instrument: [
+                './instrumented'
+            ]
+		},
         
         // Start PhantomJS
 		phantom: {
@@ -114,6 +136,59 @@ module.exports = function (grunt) {
                         seleniumAddress: seleniumAddress
                     }
                 }
+            }
+        },
+        
+        // Run protractor with code coverage
+        protractor_coverage: {
+            options: {
+                keepAlive: false,
+                noColor: false,
+                coverageDir: 'reports/e2e_coverage/protractor'
+            },
+            local: {
+                options: {
+                    configFile: 'test/protractor.conf.js',
+                    args: {
+                        baseUrl: 'http://' + protractorHostname + ':' + serverPort,
+                        seleniumAddress: seleniumUrl,
+                        browser: 'chrome',
+                        params: {
+                            coverage: true
+                        },
+                        specs: ['test/protractor/**/*Spec.js']
+                    }
+                }
+            },
+            run: {}
+        },
+        
+        // Copy all js files to be instrumented for protractor coverage
+        copy: {
+            instrument: {
+                files: [{
+                    src: ['app/**/*', '!app/js/**/*.js', 'test/mocks/*.js', 'test/protractor/*.html', 'test/protractor/**/*.html'],
+                    dest: 'instrumented/'
+                }]
+            }
+        },
+        
+        // Instrument the copied code so that we can measure coverage
+        instrument: {
+            files: 'app/js/**/*.js',
+            options: {
+                lazy: true,
+                basePath: 'instrumented'
+            }
+        },
+        
+        // Create an istanbul coverage report
+        makeReport: {
+            src: 'reports/e2e_coverage/protractor/coverage.json',
+            options: {
+                type: 'html',
+                dir: 'reports/e2e_coverage/protractor',
+                print: 'detail'
             }
         },
         
@@ -195,6 +270,22 @@ module.exports = function (grunt) {
 	grunt.registerTask('e2e-test',[
 		'connect:test',
 		'protractor:e2e',
+	]);
+    
+    /**
+     * @description Copies the source files, instruments them and runs Protractor tests with code coverage.
+     * @param serverPort string Port to start the webserver on. Default is 9999.
+     * @param seleniumUrl string Address of the selenium server to use. Default is 'http://localhost:4444/wd/hub'.
+     * @example Run '$ grunt e2e-coverage --serverPort=9999 --seleniumUrl=http://localhost:5555/wd/hub'
+     */
+	grunt.registerTask('e2e-coverage',[
+        'clean:instrument',
+        'copy',
+        'instrument',
+		'connect:instrument',
+		'protractor_coverage:local',
+        'makeReport',
+        'clean:instrument'
 	]);
     
 };

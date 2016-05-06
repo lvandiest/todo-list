@@ -1,4 +1,21 @@
-var Jasmine2HtmlReporter = require('protractor-jasmine2-html-reporter');
+var grunt = require('grunt');
+var mkdirp = require('mkdirp');
+
+var htmlReportDirectory = 'reports/protractor/html/';
+mkdirp(htmlReportDirectory);
+
+var Jasmine2ScreenshotReporter = require('protractor-jasmine2-screenshot-reporter');
+
+var reporter = new Jasmine2ScreenshotReporter({
+    dest: htmlReportDirectory,
+    cleanDestination: false,
+    showSummary: true,
+    showConfiguration: false,
+    reportTitle: null,
+    filename: 'report.html',
+    reportOnlyFailedSpecs: false,
+    captureOnlyFailedSpecs: true
+});
 
 exports.config = {
 
@@ -17,17 +34,39 @@ exports.config = {
 
     framework: 'jasmine2',
 
+    beforeLaunch: function() {
+        reporter.beforeLaunch(function() {});
+    },
+    
     onPrepare: function() {
-        // html and screenshot report
-        jasmine.getEnv().addReporter(
-            new Jasmine2HtmlReporter({
-                savePath: 'reports/e2e',
-                screenshotsFolder: 'screenshots',
-                takeScreenshots: true,
-                takeScreenshotsOnlyOnFailures: true,
-                filePrefix: 'e2eReport'
-            })
-        );
+        jasmine.getEnv().addReporter(reporter);
+    },
+    
+    afterLaunch: function(exitCode) {
+        reporter.afterLaunch(function() {});
+
+        function formatDatePart(input) {
+            input = input < 10 ? '0' + input.toString() : input.toString();
+            return input;
+        }
+
+        var d = new Date();
+        var timestamp = d.getFullYear().toString() + formatDatePart(d.getMonth() + 1) + formatDatePart(d.getDate()) + 'T' + formatDatePart(d.getHours()) + formatDatePart(d.getMinutes());
+
+        var newDirectory = htmlReportDirectory + timestamp + '/';
+
+        mkdirp(newDirectory);
+
+        grunt.file.expand(htmlReportDirectory + '/*.html').forEach(function (file) {
+            grunt.file.copy(file, file.replace(htmlReportDirectory, newDirectory));
+            grunt.file.delete(file);
+        });
+
+        grunt.file.expand(htmlReportDirectory + '/*.png').forEach(function (file) {
+            grunt.file.copy(file, file.replace(htmlReportDirectory, newDirectory));
+            grunt.file.delete(file);
+        });
+
     },
 
 	jasmineNodeOpts: {

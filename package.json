@@ -20,7 +20,7 @@
     "grunt-karma": "0.8.2",
     "grunt-open": "~0.2.3",
     "grunt-phantom": "~0.2.0",
-    "grunt-protractor-coverage": "^0.2.14",
+    "grunt-protractor-coverage": "^0.2.17",
     "grunt-protractor-runner": "^2.0.0",
     "grunt-sass": "^1.1.0",
     "jasmine-core": "^2.3.4",
@@ -39,7 +39,7 @@
     "mkdirp": "^0.5.1",
     "node-path": "0.0.3",
     "protractor": "~2.0.0",
-    "protractor-jasmine2-html-reporter": "0.0.6",
+    "protractor-jasmine2-screenshot-reporter": "^0.3.1",
     "requirejs": "~2.1.11",
     "time-grunt": "~0.2.9"
   },
